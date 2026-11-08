@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TrustVault Dashboard</title>
+</head>
+<body>
+
+    <h1>Welcome to TrustVault!</h1>
+
+    <h3>Hello, {{ request.user.username }}</h3>
+    <p>Your Role: {{ role }}</p>
+
+    <a href="{% url 'upload' %}">Upload Document</a>
+    <br><br>
+
+    <a href="{% url 'activity_history' %}">Activity History</a>
+
+    <hr>
+
+    <h2>Search Documents</h2>
+
+    <form method="GET">
+        <input
+            type="text"
+            name="q"
+            placeholder="Search documents..."
+            value="{{ search_query }}"
+        >
+        <button type="submit">Search</button>
+    </form>
+
+    <hr>
+
+    <h2>My Documents</h2>
+
+    {% for document in documents %}
+
+        <h3>{{ document.title }}</h3>
+
+        <p>{{ document.description }}</p>
+        <p>Category: {{ document.category }}</p>
+
+        <a href="{% url 'view_document' document.id %}">
+            <button type="button">View Document</button>
+        </a>
+
+        <a href="{% url 'edit_document' document.id %}">
+            <button type="button">Edit Document</button>
+        </a>
+
+        <a href="{% url 'share_document' document.id %}">
+            <button type="button">Share Document</button>
+        </a>
+
+        <h4>Shared Users</h4>
+
+        {% for permission in document.documentpermission_set.all %}
+
+            <p>{{ permission.user.username }}</p>
+
+            <form method="POST"
+                  action="{% url 'revoke_access' document.id permission.user.id %}">
+                {% csrf_token %}
+                <button type="submit">Revoke Access</button>
+            </form>
+
+        {% empty %}
+
+            <p>No users have access.</p>
+
+        {% endfor %}
+
+        <hr>
+
+    {% empty %}
+
+        <p>No documents uploaded yet.</p>
+
+    {% endfor %}
+
+
+    <h2>Shared Documents</h2>
+
+    {% for document in shared_documents %}
+
+        <h3>{{ document.title }}</h3>
+
+        <p>{{ document.description }}</p>
+        <p>Category: {{ document.category }}</p>
+        <p>Shared by: {{ document.owner.username }}</p>
+
+        <a href="{% url 'view_document' document.id %}">
+            <button type="button">View Document</button>
+        </a>
+
+        <a href="{% url 'edit_document' document.id %}">
+            <button type="button">Edit Document</button>
+        </a>
+
+        <hr>
+
+    {% empty %}
+
+        <p>No documents shared with you yet.</p>
+
+    {% endfor %}
+
+
+    <form method="POST" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit">Logout</button>
+    </form>
+
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Activity History - TrustVault</title>
+</head>
+<body>
+
+    <h1>TrustVault - Activity History</h1>
+
+    <h2>Document Activities</h2>
+
+    {% for activity in activities %}
+
+        <div>
+            <h3>{{ activity.action }}</h3>
+
+            <p>Document: {{ activity.document.title }}</p>
+
+            <p>User: {{ activity.user.username }}</p>
+
+            <p>Date: {{ activity.timestamp|date:"d-m-Y" }}</p>
+
+            <p>Time: {{ activity.timestamp|time:"h:i A" }}</p>
+        </div>
+
+        <hr>
+
+    {% empty %}
+
+        <p>No activities recorded yet.</p>
+
+    {% endfor %}
+
+    <a href="{% url 'dashboard' %}">Back to Dashboard</a>
+
+</body>
+</html>

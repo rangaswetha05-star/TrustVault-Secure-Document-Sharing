@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TrustVault Registration</title>
+</head>
+<body>
+    <h1>🔐 TrustVault</h1>
+    <h2>Create Your Account</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Register</button>
+    </form>
+
+    <p>Already registered?
+        <a href="{% url 'login' %}">Login here</a>
+    </p>
+</body>
+</html>

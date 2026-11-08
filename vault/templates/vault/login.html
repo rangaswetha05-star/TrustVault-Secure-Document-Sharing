@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TrustVault Login</title>
+</head>
+<body>
+    <h1>🔐 TrustVault</h1>
+    <h2>Login to Your Account</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <p>
+            <label>Username:</label>
+            <input type="text" name="username" required>
+        </p>
+
+        <p>
+            <label>Password:</label>
+            <input type="password" name="password" required>
+        </p>
+
+        <button type="submit">Login</button>
+    </form>
+
+    <p>
+        New user?
+        <a href="{% url 'register' %}">Create an account</a>
+    </p>
+</body>
+</html>
