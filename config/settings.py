@@ -4,8 +4,7 @@ import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-# Security settings
+# Security
 SECRET_KEY = os.environ.get(
     'SECRET_KEY',
     'django-insecure-local-development-only-key'
@@ -15,9 +14,7 @@ DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
-RENDER_EXTERNAL_HOSTNAME = os.environ.get(
-    'RENDER_EXTERNAL_HOSTNAME'
-)
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 
 if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
@@ -31,7 +28,6 @@ if RENDER_EXTERNAL_HOSTNAME:
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-
 # Applications
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -42,7 +38,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'vault',
 ]
-
 
 # Middleware
 MIDDLEWARE = [
@@ -56,9 +51,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-
 ROOT_URLCONF = 'config.urls'
-
 
 # Templates
 TEMPLATES = [
@@ -76,19 +69,28 @@ TEMPLATES = [
     },
 ]
 
-
 WSGI_APPLICATION = 'config.wsgi.application'
 
-
 # Database
-DATABASES = {
-    'default': dj_database_url.config(
-        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
-        conn_max_age=600,
-        ssl_require=not DEBUG
-    )
-}
+DATABASE_URL = os.environ.get('DATABASE_URL', '')
 
+if DATABASE_URL.startswith(('postgres://', 'postgresql://')):
+    DATABASES = {
+        'default': dj_database_url.parse(
+            DATABASE_URL,
+            conn_max_age=600
+        )
+    }
+    DATABASES['default']['OPTIONS'] = {
+        'sslmode': 'require'
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -106,20 +108,14 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'Asia/Kolkata'
-
 USE_I18N = True
-
 USE_TZ = True
 
-
 # Static files
-STATIC_URL = 'static/'
-
+STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 STORAGES = {
@@ -131,10 +127,7 @@ STORAGES = {
     },
 }
 
-
 # Email
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-
-# Default primary key
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
